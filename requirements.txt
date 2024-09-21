@@ -3,3 +3,4 @@ slowapi
 uvicorn
 polars
 psycopg2
+faker
