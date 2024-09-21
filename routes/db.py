@@ -19,6 +19,14 @@ limiter = Limiter(key_func=get_remote_address)
 @router.get("/test", status_code=status.HTTP_200_OK)
 @limiter.limit("5/minute")
 async def test_connection(request: Request, response: Response):
+    """
+        This function tests the database connection.
+        
+            Returns:
+                dict: A dictionary containing the status of the database connection.
+        
+        
+    """
     try:
         cursor = get_cursor()
         cursor.execute("SELECT 1")
@@ -30,6 +38,13 @@ async def test_connection(request: Request, response: Response):
 @router.get("/getTables", status_code=status.HTTP_200_OK)
 @limiter.limit("3/minute")
 async def get_tables(request: Request, response: Response):
+    """
+        This function queries the database for all tables.
+        
+            Returns:
+                dict: A dictionary containing the status of the query and the tables.
+                
+    """
     try:
         cursor = get_cursor()
         cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
@@ -41,6 +56,16 @@ async def get_tables(request: Request, response: Response):
 @router.get("/getTableMetadata", status_code=status.HTTP_200_OK)
 @limiter.limit("3/minute")
 async def get_table_metadata(request: Request, response: Response, table_name: str):
+    """
+        This function queries the database for the specified table metadata.
+        
+            Args:
+                table_name (str): The table name to query.
+            
+            Returns:
+                dict: A dictionary containing the status of the query, the number of rows, and the table schema.
+                
+    """
     try:
         cursor = get_cursor()
         schema = get_table_schema(cursor, table_name)
@@ -82,6 +107,17 @@ async def query_db(request: Request, response: Response, params: GetTableParams)
 @router.post("/seedTable", status_code=status.HTTP_200_OK)
 @limiter.limit("3/minute")
 async def seed_table(request: Request, response: Response, params: GetTableParams, seed_amount: int = 10):
+    """
+        This function seeds the specified table with fake data.
+        
+            Args:
+                params (GetTableParams): The table name and columns to seed.
+                seed_amount (int): The number of fake records to seed.
+            
+            Returns:
+                dict: A dictionary containing the status of the seed operation and the seeded data.
+                
+    """
     try:
         cursor = get_cursor()
         table_name = params.table_name
